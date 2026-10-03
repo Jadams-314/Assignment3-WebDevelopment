@@ -35,19 +35,25 @@ function onPlayerReady(event) {
 // 5. The API calls this function when the player's state changes.
 //    The function indicates that when playing a video (state=1),
 //    the player should play for six seconds and then stop.
+// THIS FUNCTION WAS CHANGED FOR THIS ASSIGNMENT
+
 var done = false;
 var isvisible = isElementInViewport(myplayer);
 function onPlayerStateChange(event) {
 
   
+// If visible and the event is NOT playing
 if (isvisible && event.data!= YT.PlayerState.PLAYING){
 
-    
+  // Play video
   player.playVideo();
   console.log('this is visible')
 }
+
+// If NOT visible, event is playing, and the video isn't over
 else if(!isvisible && event.data== YT.PlayerState.PLAYING && !done){
 
+  // Pause video
   player.pauseVideo();
   console.log('this is not visible')
   done=true;
@@ -80,9 +86,6 @@ function getstatus(){
 }
 
 // stack overflow code: 
-
-
-
 
 
 function isElementInViewport (el) {
