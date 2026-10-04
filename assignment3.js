@@ -2,7 +2,7 @@
 
 // 2. This code loads the IFrame Player API code asynchronously.
 
-var myplayer=document.getElementById('player')
+
 var tag = document.createElement('script');
 
 tag.src = "https://www.youtube.com/iframe_api";
@@ -36,64 +36,44 @@ function onPlayerReady(event) {
 //    The function indicates that when playing a video (state=1),
 //    the player should play for six seconds and then stop.
 var done = false;
-var isvisible = isElementInViewport(myplayer);
 function onPlayerStateChange(event) {
-
-  
-if (isvisible && event.data!= YT.PlayerState.PLAYING){
-
-    
-  player.playVideo();
-  console.log('this is visible')
-}
-else if(!isvisible && event.data== YT.PlayerState.PLAYING && !done){
-
-  player.pauseVideo();
-  console.log('this is not visible')
-  done=true;
-}
-  /*
-  if (event.data == YT.PlayerState.PLAYING && !done) {
+  /*if (event.data == YT.PlayerState.PLAYING && !done) {
     setTimeout(stopVideo, 6000);
     done = true;
-  }
-  
-    
-   if (event.data == YT.PlayerState.PLAYING && !done) {
-    setTimeout(pauseVideo, 6000);
-    done = true;
   }*/
-}
-function playVideo(){
-  player.playVideo();
+ /*
+  if (event.data==YT.PlayerState.PLAYING && !visible){
+    setTimeout(stopVideo);
+  }*/
+  /*
+  if (!visible && event.data == YT.PlayerState.PLAYING && !done) {
+    pauseVideo();
+    done = true;
+  }
+  if(visible && event.data ==YT.PlayerState.PAUSED && !done){
+    playVideo();
+    done =true;
+  }
+    */
 }
 function stopVideo() {
   player.stopVideo();
 }
-//function pauses video
+function playVideo() {
+  player.playVideo();
+}
 function pauseVideo(){
   player.pauseVideo();
 }
-//function gets video play status
-function getstatus(){
-  player.getPlayerState();
-}
-
-// stack overflow code: 
-
-
-
+// our code starts here (largest reference is stack overflow code):
 
 
 function isElementInViewport (el) {
 
-    // Special bonus for those using jQuery
-    if (typeof jQuery === "function" && el instanceof jQuery) {
-        el = el[0];
-    }
+    if (!el) return false;
 
     var rect = el.getBoundingClientRect();
-
+    if (rect.width===0 && rect.height ===0) return false;
     return (
         rect.top >= 0 &&
         rect.left >= 0 &&
@@ -102,37 +82,33 @@ function isElementInViewport (el) {
     );
 }
 
-function onVisibilityChange(el, callback) {
-    var old_visible;
-    return function () {
-        var visible = isElementInViewport(el);
-        if (visible != old_visible) {
-            old_visible = visible;
-            if (typeof callback == 'function') {
-                callback();
-            }
-        }
+//made some changes to stack overflow code. don't have experience with jquery so don't have any
+//proper means to reliably troubleshoot. going to keep only the non jquery parts of the 
+//example code and replace the rest with something as similar to geeks4geeks code as I can
+
+
+function onVisibilityChange() {
+  //without this line I think 'player' references the div with id=player before it gets converted
+  //into an iframe leading to the id 'player' to always show as not visible causing it to 
+  //get paused the instant the video was played
+  const iframeElement = document.getElementById('player');
+  if (!iframeElement) return;
+  //tested with console .logs. visibility works as expected.
+  var visible = isElementInViewport(iframeElement);
+  if (visible !== window.old_visible) {
+    window.old_visible = visible;
+    if (visible) {
+      //.taking the console.log code from the geeks4geeks example for troubleshooting wasted
+      //a lot of time trying to get the code to work without knowing if visibility was even
+      //being recognized(it wasn't)
+      console.log('Element is visible in viewport');
+      playVideo();
+    } else {
+      console.log('Element is not visible in viewport');
+      pauseVideo();
     }
+  }
 }
 
-var handler = onVisibilityChange(el, function() {
-    /* Your code go here */
-});
-
-
-// jQuery
-$(window).on('DOMContentLoaded load resize scroll', handler);
-
-/* // Non-jQuery
-if (window.addEventListener) {
-    addEventListener('DOMContentLoaded', handler, false);
-    addEventListener('load', handler, false);
-    addEventListener('scroll', handler, false);
-    addEventListener('resize', handler, false);
-} else if (window.attachEvent)  {
-    attachEvent('onDOMContentLoaded', handler); // Internet Explorer 9+ :(
-    attachEvent('onload', handler);
-    attachEvent('onscroll', handler);
-    attachEvent('onresize', handler);
-}
-*/
+window.addEventListener('DOMContentLoaded', onVisibilityChange);
+window.addEventListener('scroll', onVisibilityChange);
