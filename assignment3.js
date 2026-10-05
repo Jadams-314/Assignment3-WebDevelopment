@@ -1,8 +1,6 @@
 // Justin Adams and Jason Gonatas
 
 // 2. This code loads the IFrame Player API code asynchronously.
-
-var myplayer=document.getElementById('player')
 var tag = document.createElement('script');
 
 tag.src = "https://www.youtube.com/iframe_api";
@@ -23,8 +21,6 @@ function onYouTubeIframeAPIReady() {
     events: {
       'onReady': onPlayerReady,
       //'onStateChange': onPlayerStateChange
-      'onVisibilityChange': onVisibilityChange,
-      'isElementInViewport': isElementInViewport
     }
   });
 }
@@ -39,7 +35,9 @@ function onPlayerReady(event) {
 //    the player should play for six seconds and then stop.
 var done = false;
 
-// The function's contents are commented out but the function is kept so the video can appear
+// THIS FUNCTION WAS REMOVED. To add it back, uncomment this function and the declaration in the 'events' part
+// of onYouTubeIframeAPIReady
+//
 //function onPlayerStateChange(event) {
 //    if (event.data == YT.PlayerState.PLAYING && !done) {
 //      setTimeout(stopVideo, 6000);
@@ -53,18 +51,19 @@ function playVideo(){
 function stopVideo() {
   player.stopVideo();
 }
-//function pauses video
+
+// Function pauses video
 function pauseVideo(){
   player.pauseVideo();
 }
-//function gets video play status
+
+// Function gets video play status
 function getstatus(){
   player.getPlayerState();
 }
 
 
-// our code starts here (largest reference is stack overflow code):
-
+// Our code starts here (largest reference is stack overflow code):
 
 function isElementInViewport (el) {
 
@@ -86,19 +85,19 @@ function isElementInViewport (el) {
 
 
 function onVisibilityChange() {
-  //without this line I think 'player' references the div with id=player before it gets converted
-  //into an iframe leading to the id 'player' to always show as not visible causing it to 
-  //get paused the instant the video was played
+  // Without this line I think 'player' references the div with id=player before it gets converted
+  // into an iframe leading to the id 'player' to always show as not visible causing it to 
+  // get paused the instant the video was played
   const iframeElement = document.getElementById('player');
   if (!iframeElement) return;
-  //tested with console .logs. visibility works as expected. El = iframeElement
+  // Tested with console .logs. visibility works as expected. El = iframeElement
   var visible = isElementInViewport(iframeElement);
   if (visible !== window.old_visible) {
     window.old_visible = visible;
-    if (visible) {
-      //.taking the console.log code from the geeks4geeks example for troubleshooting wasted
-      //a lot of time trying to get the code to work without knowing if visibility was even
-      //being recognized(it wasn't)
+    if (visible && iframeElement.data != YT.PlayerState.UNSTARTED) {
+      // Taking the console.log code from the geeks4geeks example for troubleshooting wasted
+      // a lot of time trying to get the code to work without knowing if visibility was even
+      // being recognized(it wasn't)
       console.log('Element is visible in viewport');
       playVideo();
     } else {
@@ -110,13 +109,13 @@ function onVisibilityChange() {
 
 //Non-jQuery
 if (window.addEventListener) {
-    addEventListener('DOMContentLoaded', handler, false);
-    addEventListener('load', handler, false);
-    addEventListener('scroll', handler, false);
-    addEventListener('resize', handler, false);
+    addEventListener('DOMContentLoaded', onVisibilityChange, false);
+    addEventListener('load', onVisibilityChange, false);
+    addEventListener('scroll', onVisibilityChange, false);
+    addEventListener('resize', onVisibilityChange, false);
 } else if (window.attachEvent)  {
-    attachEvent('onDOMContentLoaded', handler); // Internet Explorer 9+ :(
-    attachEvent('onload', handler);
-    attachEvent('onscroll', handler);
-    attachEvent('onresize', handler);
+    attachEvent('onDOMContentLoaded', onVisibilityChange); // Internet Explorer 9+ :(
+    attachEvent('onload', onVisibilityChange);
+    attachEvent('onscroll', onVisibilityChange);
+    attachEvent('onresize', onVisibilityChange);
 }
