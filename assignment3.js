@@ -22,7 +22,9 @@ function onYouTubeIframeAPIReady() {
     },
     events: {
       'onReady': onPlayerReady,
-      'onStateChange': onPlayerStateChange
+      //'onStateChange': onPlayerStateChange
+      'onVisibilityChange': onVisibilityChange,
+      'isElementInViewport': isElementInViewport
     }
   });
 }
@@ -38,12 +40,12 @@ function onPlayerReady(event) {
 var done = false;
 
 // The function's contents are commented out but the function is kept so the video can appear
-function onPlayerStateChange(event) {
+//function onPlayerStateChange(event) {
 //    if (event.data == YT.PlayerState.PLAYING && !done) {
 //      setTimeout(stopVideo, 6000);
 //      done = true;
 //    }
-}
+//}
 
 function playVideo(){
   player.playVideo();
