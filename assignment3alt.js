@@ -2,7 +2,7 @@
 
 // 2. This code loads the IFrame Player API code asynchronously.
 
-var myplayer=document.getElementById('player')
+//var myplayer=document.getElementById('player')
 var tag = document.createElement('script');
 
 tag.src = "https://www.youtube.com/iframe_api";
@@ -31,7 +31,8 @@ function onYouTubeIframeAPIReady() {
 
 // 4. The API will call this function when the video player is ready.
 function onPlayerReady(event) {
-  event.target.playVideo();
+    //event.target.playVideo();
+
 }
 
 // 5. The API calls this function when the player's state changes.
@@ -45,6 +46,10 @@ function onPlayerStateChange(event) {
 //      setTimeout(stopVideo, 6000);
 //      done = true;
 //    }
+      if (event.data == YT.PlayerState.PLAYING && !done){
+        done= true;
+      }
+
 }
 
 function playVideo(){
@@ -84,6 +89,9 @@ function isElementInViewport (el) {
 //proper means to reliably troubleshoot. going to keep only the non jquery parts of the 
 //example code and replace the rest with something as similar to geeks4geeks code as I can
 
+//clicked=false;
+
+if (done==false){
 
 function onVisibilityChange() {
   //without this line I think 'player' references the div with id=player before it gets converted
@@ -100,12 +108,14 @@ function onVisibilityChange() {
       //a lot of time trying to get the code to work without knowing if visibility was even
       //being recognized(it wasn't)
       console.log('Element is visible in viewport');
+      
       playVideo();
     } else {
       console.log('Element is not visible in viewport');
       pauseVideo();
     }
   }
+}
 }
 
 //Non-jQuery
