@@ -35,41 +35,14 @@ function onPlayerReady(event) {
 // 5. The API calls this function when the player's state changes.
 //    The function indicates that when playing a video (state=1),
 //    the player should play for six seconds and then stop.
-// THIS FUNCTION WAS CHANGED FOR THIS ASSIGNMENT
-
-var done = false;
-var isvisible = isElementInViewport(myplayer);
-function onPlayerStateChange(event) {
-
-  
-// If visible and the event is NOT playing
-if (isvisible && event.data!= YT.PlayerState.PLAYING){
-
-  // Play video
-  player.playVideo();
-  console.log('this is visible')
-}
-
-// If NOT visible, event is playing, and the video isn't over
-else if(!isvisible && event.data== YT.PlayerState.PLAYING && !done){
-
-  // Pause video
-  player.pauseVideo();
-  console.log('this is not visible')
-  done=true;
-}
-  /*
-  if (event.data == YT.PlayerState.PLAYING && !done) {
-    setTimeout(stopVideo, 6000);
-    done = true;
+  var done = false;
+  function onPlayerStateChange(event) {
+    if (event.data == YT.PlayerState.PLAYING && !done) {
+      setTimeout(stopVideo, 6000);
+      done = true;
+    }
   }
-  
-    
-   if (event.data == YT.PlayerState.PLAYING && !done) {
-    setTimeout(pauseVideo, 6000);
-    done = true;
-  }*/
-}
+
 function playVideo(){
   player.playVideo();
 }
@@ -91,9 +64,9 @@ function getstatus(){
 function isElementInViewport (el) {
 
     // Special bonus for those using jQuery
-    if (typeof jQuery === "function" && el instanceof jQuery) {
-        el = el[0];
-    }
+    //if (typeof jQuery === "function" && el instanceof jQuery) {
+    //    el = el[0];
+    //}
 
     var rect = el.getBoundingClientRect();
 
@@ -120,13 +93,33 @@ function onVisibilityChange(el, callback) {
 
 var handler = onVisibilityChange(el, function() {
     /* Your code go here */
+    var done = false;
+    var isvisible = isElementInViewport(myplayer);
+
+      
+    // If visible and the event is NOT playing
+    if (isvisible && event.data!= YT.PlayerState.PLAYING){
+
+      // Play video
+      player.playVideo();
+      console.log('this is visible')
+    }
+
+    // If NOT visible, event is playing, and the video isn't over
+    else if(!isvisible && event.data== YT.PlayerState.PLAYING && !done){
+
+      // Pause video
+      player.pauseVideo();
+      console.log('this is not visible')
+      done=true;
+    }
 });
 
 
 // jQuery
-$(window).on('DOMContentLoaded load resize scroll', handler);
+//$(window).on('DOMContentLoaded load resize scroll', handler);
 
-/* // Non-jQuery
+Non-jQuery
 if (window.addEventListener) {
     addEventListener('DOMContentLoaded', handler, false);
     addEventListener('load', handler, false);
@@ -138,4 +131,3 @@ if (window.addEventListener) {
     attachEvent('onscroll', handler);
     attachEvent('onresize', handler);
 }
-*/
