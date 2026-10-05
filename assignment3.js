@@ -1,4 +1,4 @@
-// Type name(s) here: Jane Doe
+// Justin Adams and Jason Gonatas
 
 // 2. This code loads the IFrame Player API code asynchronously.
 
@@ -35,13 +35,15 @@ function onPlayerReady(event) {
 // 5. The API calls this function when the player's state changes.
 //    The function indicates that when playing a video (state=1),
 //    the player should play for six seconds and then stop.
-  var done = false;
-  function onPlayerStateChange(event) {
-    if (event.data == YT.PlayerState.PLAYING && !done) {
-      setTimeout(stopVideo, 6000);
-      done = true;
-    }
-  }
+var done = false;
+
+// The function's contents are commented out but the function is kept so the video can appear
+function onPlayerStateChange(event) {
+//    if (event.data == YT.PlayerState.PLAYING && !done) {
+//      setTimeout(stopVideo, 6000);
+//      done = true;
+//    }
+}
 
 function playVideo(){
   player.playVideo();
@@ -58,18 +60,16 @@ function getstatus(){
   player.getPlayerState();
 }
 
-// stack overflow code: 
+
+// our code starts here (largest reference is stack overflow code):
 
 
 function isElementInViewport (el) {
 
-    // Special bonus for those using jQuery
-    //if (typeof jQuery === "function" && el instanceof jQuery) {
-    //    el = el[0];
-    //}
+    if (!el) return false;
 
     var rect = el.getBoundingClientRect();
-
+    if (rect.width===0 && rect.height ===0) return false;
     return (
         rect.top >= 0 &&
         rect.left >= 0 &&
@@ -78,48 +78,35 @@ function isElementInViewport (el) {
     );
 }
 
-function onVisibilityChange(el, callback) {
-    var old_visible;
-    return function () {
-        var visible = isElementInViewport(el);
-        if (visible != old_visible) {
-            old_visible = visible;
-            if (typeof callback == 'function') {
-                callback();
-            }
-        }
+//made some changes to stack overflow code. don't have experience with jquery so don't have any
+//proper means to reliably troubleshoot. going to keep only the non jquery parts of the 
+//example code and replace the rest with something as similar to geeks4geeks code as I can
+
+
+function onVisibilityChange() {
+  //without this line I think 'player' references the div with id=player before it gets converted
+  //into an iframe leading to the id 'player' to always show as not visible causing it to 
+  //get paused the instant the video was played
+  const iframeElement = document.getElementById('player');
+  if (!iframeElement) return;
+  //tested with console .logs. visibility works as expected. El = iframeElement
+  var visible = isElementInViewport(iframeElement);
+  if (visible !== window.old_visible) {
+    window.old_visible = visible;
+    if (visible) {
+      //.taking the console.log code from the geeks4geeks example for troubleshooting wasted
+      //a lot of time trying to get the code to work without knowing if visibility was even
+      //being recognized(it wasn't)
+      console.log('Element is visible in viewport');
+      playVideo();
+    } else {
+      console.log('Element is not visible in viewport');
+      pauseVideo();
     }
+  }
 }
 
-var handler = onVisibilityChange(el, function() {
-    /* Your code go here */
-    var done = false;
-    var isvisible = isElementInViewport(myplayer);
-
-      
-    // If visible and the event is NOT playing
-    if (isvisible && event.data!= YT.PlayerState.PLAYING){
-
-      // Play video
-      player.playVideo();
-      console.log('this is visible')
-    }
-
-    // If NOT visible, event is playing, and the video isn't over
-    else if(!isvisible && event.data== YT.PlayerState.PLAYING && !done){
-
-      // Pause video
-      player.pauseVideo();
-      console.log('this is not visible')
-      done=true;
-    }
-});
-
-
-// jQuery
-//$(window).on('DOMContentLoaded load resize scroll', handler);
-
-Non-jQuery
+//Non-jQuery
 if (window.addEventListener) {
     addEventListener('DOMContentLoaded', handler, false);
     addEventListener('load', handler, false);
