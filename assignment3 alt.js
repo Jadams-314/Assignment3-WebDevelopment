@@ -20,13 +20,14 @@ function onYouTubeIframeAPIReady() {
     },
     events: {
       //'onReady': onPlayerReady,
-      'onStateChange': onPlayerStateChange
+      //'onStateChange': onPlayerStateChange
     }
   });
 }
 
 // THIS FUNCTION WAS REMOVED. To add it back, uncomment this function and the declaration in the 'events' part
 // of onYouTubeIframeAPIReady
+
 
 // 4. The API will call this function when the video player is ready.
 //function onPlayerReady(event) {
@@ -60,20 +61,22 @@ function pauseVideo(){
   player.pauseVideo();
 }
 
-// Is the video started? - Reutilizes Dr Jung's method to check if the video is clicked. 
+// Function gets video play status
+function getstatus(){
+  player.getPlayerState();
+}
 
+// Is the video started? - Reutilizes Dr Jung's method to check if the video is clicked. This keeps
+// the video from autoplaying.
 var done = false;
 function onPlayerStateChange(event) {
-
-      if (event.data == YT.PlayerState.PLAYING && !done){
-       
-        // Done isn't true until the video is played
-        done = true;
-      }
+    if (event.data == YT.PlayerState.PLAYING && !done) {
+      done = true;
+    }
 
 }
 
-// Edited Stack Overflow Code Starts here. This code was retrieved from the link in the instructions
+// Our code starts here (largest reference is stack overflow code):
 
 function isElementInViewport (el) {
 
@@ -89,44 +92,33 @@ function isElementInViewport (el) {
     );
 }
 
+//made some changes to stack overflow code. don't have experience with jquery so don't have any
+//proper means to reliably troubleshoot. going to keep only the non jquery parts of the 
+//example code and replace the rest with something as similar to geeks4geeks code as I can
 
+if (done == false){               // Done keeps this from autoplaying the video
 function onVisibilityChange() {
-
-  // Without this, 'player' references the div with id=player before it gets converted
+  // Without this line I think 'player' references the div with id=player before it gets converted
   // into an iframe leading to the id 'player' to always show as not visible causing it to 
   // get paused the instant the video was played
-
   const iframeElement = document.getElementById('player');
-
-  // As stated at in onPlayerStateChange, checks if video has been played manually if not onvisibilitychange ends 
-  // early. Doesnt start again until user scrolls, video loads, etc
-
-  if(!done) return;
-
-  // Checks if video is loaded in view. iframeelement replaces the default div=idplayer. 
-  // Ensures the function doesnt run before the iframeelement is created.
   if (!iframeElement) return;
-
+  // Tested with console .logs. visibility works as expected. El = iframeElement
   var visible = isElementInViewport(iframeElement);
-
-  // Updates visibility
   if (visible !== window.old_visible) {
     window.old_visible = visible;
-
-    // If video is visible
-    // This code was retrieved from the geeksforgeeks example in the instructions
     if (visible) {
-  
+      // Taking the console.log code from the geeks4geeks example for troubleshooting wasted
+      // a lot of time trying to get the code to work without knowing if visibility was even
+      // being recognized(it wasn't)
       console.log('Element is visible in viewport');
       playVideo();
-
     } else {
-      
       console.log('Element is not visible in viewport');
       pauseVideo();
     }
   }
-
+  }
 }
 
 //Non-jQuery
