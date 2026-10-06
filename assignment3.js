@@ -45,6 +45,7 @@ function onPlayerStateChange(event) {
 //      setTimeout(stopVideo, 6000);
 //      done = true;
 //    }
+//    used original if statement as reference. done variable works in this case to ensure functions below dont start until video has played. (Prevents autoplay)
       if (event.data == YT.PlayerState.PLAYING && !done){
        //onVisibilityChange();
        //function call no longer necessary. added to event listeners at bottom of code.
@@ -69,7 +70,7 @@ function getstatus(){
 }
 
 
-// our code starts here (largest reference is stack overflow code):
+// Our code largely starts here (largest reference is stack overflow code):
 
 
 function isElementInViewport (el) {
@@ -99,7 +100,9 @@ function onVisibilityChange() {
   //into an iframe leading to the id 'player' to always show as not visible causing it to 
   //get paused the instant the video was played
   const iframeElement = document.getElementById('player');
+  //checks if video has been played manually, if not onvisibilitychange ends early. doesnt start again until user scrolls, video loads, etc
   if(!done) return;
+  //checks if video has loaded in. iframeelement replaces the default div=idplayer. ensures the function doesnt run before the iframeelement is created.
   if (!iframeElement) return;
   //tested with console .logs. visibility works as expected. El = iframeElement
   var visible = isElementInViewport(iframeElement);
