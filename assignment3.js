@@ -45,8 +45,9 @@ function onPlayerStateChange(event) {
 //      setTimeout(stopVideo, 6000);
 //      done = true;
 //    }
-      if (event.data == YT.PlayerState.PLAYING){
-        onVisibilityChange();
+      if (event.data == YT.PlayerState.PLAYING && !done){
+       //onVisibilityChange();
+       //function call no longer necessary. added to event listeners at bottom of code.
         done = true;
       }
 
